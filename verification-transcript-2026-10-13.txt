@@ -1,0 +1,48 @@
+$ g++ --version | head -1
+g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+[exit 0]
+
+$ g++ -std=c++20 -O2 -Wall -Wextra -Werror test_saturating_cast_fp.cpp -o /tmp/t_g20 && /tmp/t_g20
+PASS
+[exit 0]
+
+$ g++ -std=c++23 -O2 -Wall -Wextra -Werror test_saturating_cast_fp.cpp -o /tmp/t_g23 && /tmp/t_g23
+PASS
+[exit 0]
+
+$ clang++ --version | head -1
+Ubuntu clang version 18.1.3 (1ubuntu1)
+[exit 0]
+
+$ clang++ -std=c++20 -O2 -Wall -Wextra -Werror test_saturating_cast_fp.cpp -o /tmp/t_c20 && /tmp/t_c20
+PASS
+[exit 0]
+
+$ clang++ -std=c++23 -O2 -Wall -Wextra -Werror test_saturating_cast_fp.cpp -o /tmp/t_c23 && /tmp/t_c23
+PASS
+[exit 0]
+
+$ g++ -std=c++20 -O2 bench.cpp -o /tmp/b_g && /tmp/b_g
+=== double -> int64_t ===
+proposed saturating_cast<int64_t>               4.591 ns/elem   (checksum 7331883308918430930)
+naive clamp-then-static_cast<int64_t>           3.487 ns/elem   (checksum 7331883308918432931)
+=== double -> uint64_t ===
+proposed saturating_cast<uint64_t>             29.067 ns/elem   (checksum 13691357729311199326)
+naive clamp-then-static_cast<uint64_t>         25.837 ns/elem   (checksum 13691357729311201327)
+=== double -> int64_t, in-range only (cost floor) ===
+proposed saturating_cast<int64_t>               3.147 ns/elem   (checksum 18446744073611198464)
+bare static_cast<int64_t> (UB out of range)     1.473 ns/elem   (checksum 18446744073611198464)
+[exit 0]
+
+$ clang++ -std=c++20 -O2 bench.cpp -o /tmp/b_c && /tmp/b_c
+=== double -> int64_t ===
+proposed saturating_cast<int64_t>               5.129 ns/elem   (checksum 7331883308918430930)
+naive clamp-then-static_cast<int64_t>           4.660 ns/elem   (checksum 7331883308918432931)
+=== double -> uint64_t ===
+proposed saturating_cast<uint64_t>             24.167 ns/elem   (checksum 13691357729311199326)
+naive clamp-then-static_cast<uint64_t>         21.570 ns/elem   (checksum 4467985692456425519)
+=== double -> int64_t, in-range only (cost floor) ===
+proposed saturating_cast<int64_t>               3.877 ns/elem   (checksum 18446744073611198464)
+bare static_cast<int64_t> (UB out of range)     1.664 ns/elem   (checksum 18446744073611198464)
+[exit 0]
+
